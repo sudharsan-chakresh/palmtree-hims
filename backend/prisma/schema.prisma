@@ -1,0 +1,195 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model appointments {
+  id         String   @id
+  patient_id String
+  doctor_id  String
+  time       DateTime
+  status     String   @default("Scheduled")
+}
+
+model bills {
+  id         String @id
+  patient_id String
+  total      Float
+  status     String @default("Pending")
+}
+
+model communication_logs {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String?   @db.VarChar(255)
+  subject    String?   @db.VarChar(255)
+  recipient  String?   @db.VarChar(255)
+  status     String?   @db.VarChar(50)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model consultation_events {
+  id           String     @id
+  encounter_id String
+  event_type   String
+  metadata     Json?
+  created_at   DateTime   @default(now())
+  encounters   encounters @relation(fields: [encounter_id], references: [id])
+}
+
+model consultation_predictions {
+  id                  String     @id
+  encounter_id        String
+  predicted_time_mins Int
+  complexity          String
+  triage_priority     Int
+  reasoning           String?
+  created_at          DateTime   @default(now())
+  encounters          encounters @relation(fields: [encounter_id], references: [id])
+}
+
+model encounters {
+  id                       String                     @id
+  patient_id               String
+  doctor_id                String
+  diagnosis                String?
+  notes                    String?
+  created_at               DateTime                   @default(now())
+  consultation_events      consultation_events[]
+  consultation_predictions consultation_predictions[]
+}
+
+model patients {
+  id         String   @id
+  name       String
+  phone      String?
+  created_at DateTime @default(now())
+}
+
+model prescriptions {
+  id           String @id
+  encounter_id String
+  drug_name    String
+}
+
+model rbac_menus {
+  id              String            @id
+  label           String
+  path            String
+  icon            String?
+  parent_id       String?
+  sort_order      Int               @default(0)
+  rbac_role_menus rbac_role_menus[]
+}
+
+model rbac_permissions {
+  id                    String                  @id
+  key                   String                  @unique
+  description           String?
+  rbac_role_permissions rbac_role_permissions[]
+}
+
+model rbac_role_menus {
+  role_id    String
+  menu_id    String
+  rbac_menus rbac_menus @relation(fields: [menu_id], references: [id])
+  rbac_roles rbac_roles @relation(fields: [role_id], references: [id])
+
+  @@id([role_id, menu_id])
+}
+
+model rbac_role_permissions {
+  role_id          String
+  permission_id    String
+  rbac_permissions rbac_permissions @relation(fields: [permission_id], references: [id])
+  rbac_roles       rbac_roles       @relation(fields: [role_id], references: [id])
+
+  @@id([role_id, permission_id])
+}
+
+model rbac_roles {
+  id                    String                  @id
+  name                  String                  @unique
+  description           String?
+  rbac_role_menus       rbac_role_menus[]
+  rbac_role_permissions rbac_role_permissions[]
+  rbac_user_roles       rbac_user_roles[]
+}
+
+model rbac_user_roles {
+  user_id    String
+  role_id    String
+  rbac_roles rbac_roles @relation(fields: [role_id], references: [id])
+  users      users      @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, role_id])
+}
+
+model support_tickets {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id  String?   @db.VarChar(255)
+  subject    String?   @db.VarChar(255)
+  category   String?   @db.VarChar(50)
+  priority   String?   @default("Medium") @db.VarChar(20)
+  status     String?   @default("Open") @db.VarChar(20)
+  message    String?
+  response   String?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model tenant_admin_contacts {
+  id           String   @id
+  tenant_id    String
+  contact_name String?
+  email        String?
+  phone        String?
+  address      String?
+  created_at   DateTime @default(now())
+  tenants      tenants  @relation(fields: [tenant_id], references: [id])
+}
+
+model tenants {
+  id                    String                  @id
+  name                  String                  @unique
+  db_name               String                  @unique
+  plan                  String
+  default_pwd           String?
+  background_color      String?                 @default("#ffffff")
+  text_color            String?                 @default("#1e293b")
+  hero_background_color String?                 @default("#f8fafc")
+  overall_text_color    String?                 @default("#475569")
+  created_at            DateTime                @default(now())
+  admin_email           String?
+  shard_id              String?
+  logo_url              String?
+  primary_accent        String?                 @default("#3b82f6")
+  primary_dark          String?                 @default("#0f172a")
+  code                  String?                 @db.VarChar(255)
+  ui_settings           Json?                   @default("{}")
+  sensitive_settings    Json?                   @default("{}")
+  domain                String?                 @unique @db.VarChar(255)
+  tenant_admin_contacts tenant_admin_contacts[]
+}
+
+model users {
+  id              String            @id
+  email           String            @unique
+  password_hash   String
+  role            String
+  name            String?
+  created_at      DateTime          @default(now())
+  rbac_user_roles rbac_user_roles[]
+}
+
+model utilization_logs {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenant_id     String?   @db.VarChar(255)
+  db_size_mb    Decimal?  @db.Decimal(10, 2)
+  total_records Int?
+  active_users  Int?
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+}

@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Vary: Origin
+Access-Control-Allow-Credentials: true
+Content-Type: application/json; charset=utf-8
+Content-Length: 833
+ETag: W/"341-bH0w4LMAlto0Zqk1AzkG+V3VcME"
+Date: Tue, 02 Jun 2026 08:21:25 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+[{"id":"4a54b84a-b0c1-4269-aaef-1c279de908dc","name":"Wellness Clinics - Standard","dbName":"wellness_clinics___standard","shardId":"wellness_clinics___standard","plan":"Standard","adminEmail":"admin@wellness.com"},{"id":"518fa344-482d-441d-9463-434c6c117b24","name":"Wellness Clinic - Basic","dbName":"wellness_clinic___basic","shardId":"wellness_clinic___basic","plan":"Basic","adminEmail":"admin@wellness.com"},{"id":"0edcbcd2-d8b8-4e30-a602-5ea13c1fd459","name":"Apollo Hospitals - Professional Ltd","dbName":"apollo_hospitals","shardId":null,"plan":"Professional","adminEmail":null},{"id":"ecba1327-91a5-4fa0-b04e-9e0f883884b1","name":"Welnness Nursing Home - Professional","dbName":"welnness_nursing_home___professional","shardId":"welnness_nursing_home___professional","plan":"Professional","adminEmail":"admin@wellness.com"}]

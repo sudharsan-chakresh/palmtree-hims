@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- ══ PUBLIC PAGES ══════════════════════════════════════════════════════ -->
+
+  <!-- Landing Page (Home) -->
+  <url>
+    <loc>https://jioplix.com/</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Login / Portal Sign-In -->
+  <url>
+    <loc>https://jioplix.com/login</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Mobile App Preview Portal -->
+  <url>
+    <loc>https://jioplix.com/mobile</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ══ LANDING PAGE ANCHOR SECTIONS ════════════════════════════════════ -->
+
+  <!-- Features Section -->
+  <url>
+    <loc>https://jioplix.com/#features</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- AI Engine Section -->
+  <url>
+    <loc>https://jioplix.com/#ai-services</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Pricing Tiers -->
+  <url>
+    <loc>https://jioplix.com/#pricing</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Product Roadmap -->
+  <url>
+    <loc>https://jioplix.com/#future</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Contact Us -->
+  <url>
+    <loc>https://jioplix.com/#contact</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ══ DOWNLOADABLE ASSETS ══════════════════════════════════════════════ -->
+
+  <!-- Android APK Download -->
+  <url>
+    <loc>https://jioplix.com/Jioplix.apk</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ══ STANDARDS & COMPLIANCE (ANCHOR) ═════════════════════════════════ -->
+
+  <url>
+    <loc>https://jioplix.com/#standards</loc>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>

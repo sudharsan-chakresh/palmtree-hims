@@ -1,0 +1,49 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Local scratch/test scripts
+/scratch/*
+!/scratch/*.gitkeep
+/backend/scratch/*
+
+# Test payloads and response dumps
+login_payload.json
+login_test.json
+resp_*.json
+webapps.json
+
+# Extracted Azure deployment logs
+webapp_logs_extracted/
+
+# Frontend build output - built by CI/CD pipeline, not committed
+client/dist
+
+# Azure deployment logs
+azure_logs/
+webapp_logs.zip
+
+# Large binary / APK files
+client/public/*.apk
+*.apk
+
+# Debug artefacts
+debug-*.png
+tmp-debug-*.js
+test-results.json
+test_output.txt
+debug.log
+.vercel
+.env*.local
+
+# Temporary PG tools and dumps
+pg.zip
+pg/
+dump.sql
+backend/transfer.js
