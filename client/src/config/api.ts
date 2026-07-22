@@ -18,12 +18,12 @@ function getBaseUrl() {
     if (['localhost', '127.0.0.1', '::1'].includes(host)) {
       return 'http://localhost:4000';
     }
-    // Production Vercel Deployment Fallback
-    if (host.includes('vercel.app') || host.includes('palmtree')) {
-      return 'https://palmtree-backend.vercel.app';
+    // Production Vercel Deployment Fallback (Monolithic)
+    if (host.includes('vercel.app') || host.includes('palmtree') || host.includes('jioplix')) {
+      return window.location.origin;
     }
   }
-  return 'https://palmtree-backend.vercel.app';
+  return '';
 }
 
 export const API_BASE_URL = getBaseUrl();
