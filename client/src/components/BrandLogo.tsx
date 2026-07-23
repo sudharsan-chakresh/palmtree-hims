@@ -1,13 +1,13 @@
 import { getTenantBrandingConfig, getNamespacedItem } from "../config/theme";
 
 interface BrandLogoProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   showText?: boolean;
   light?: boolean;
 }
 
 export default function BrandLogo({ size = 'md', light = false }: BrandLogoProps) {
-  const height = size === 'sm' ? 28 : size === 'md' ? 48 : 72;
+  const height = size === 'sm' ? 28 : size === 'md' ? 48 : size === 'lg' ? 72 : size === 'xl' ? 100 : 140;
   const useTenantBranding = getTenantBrandingConfig();
   const customLogo = useTenantBranding ? getNamespacedItem('theme_logo_url') || null : null;
   

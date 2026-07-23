@@ -101,63 +101,138 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ 
+    <div className="login-bg" style={{ 
       minHeight: '100vh', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-      fontFamily: "'Inter', sans-serif"
+      fontFamily: "'Inter', sans-serif",
+      position: 'relative',
+      overflow: 'hidden'
     }}>
-      <div style={{ 
+      <style>{`
+        @keyframes gradientBG {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+          0% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+          100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .login-bg {
+          background: radial-gradient(circle at top right, #e2e8f0, #f8fafc, #e2e8f0);
+          background-size: 200% 200%;
+          animation: gradientBG 15s ease infinite;
+        }
+        .login-card {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 1);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+          animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .left-panel {
+          background: linear-gradient(135deg, #003870, #0056A3, #003870);
+          background-size: 300% 300%;
+          animation: gradientBG 12s ease infinite;
+          position: relative;
+          overflow: hidden;
+        }
+        .glass-input {
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 86, 163, 0.15) !important;
+          color: #0f172a !important;
+          transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+          border-color: #0056A3 !important;
+          box-shadow: 0 0 0 4px rgba(0, 86, 163, 0.1) !important;
+          outline: none;
+        }
+        .glass-input::placeholder {
+          color: #94a3b8 !important;
+        }
+        .login-btn {
+          background: linear-gradient(135deg, #0056A3, #003870);
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        .login-btn::after {
+          content: '';
+          position: absolute;
+          top: 0; left: -100%; width: 50%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transform: skewX(-20deg);
+          transition: all 0.5s ease;
+        }
+        .login-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(0, 86, 163, 0.3);
+        }
+        .login-btn:hover::after {
+          left: 150%;
+        }
+        .floating-shape-light {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(60px);
+          z-index: 0;
+          animation: float 10s ease-in-out infinite;
+        }
+      `}</style>
+      
+      {/* Decorative floating shapes */}
+      <div className="floating-shape-light" style={{ width: '300px', height: '300px', background: 'rgba(76, 175, 80, 0.15)', top: '-50px', right: '10%' }} />
+      <div className="floating-shape-light" style={{ width: '400px', height: '400px', background: 'rgba(0, 86, 163, 0.1)', bottom: '-100px', left: '10%', animationDelay: '-5s' }} />
+
+      <div className="login-card" style={{ 
         width: isMobile ? '90%' : '1040px', 
         maxWidth: '1040px',
-        height: isMobile ? 'auto' : '640px',
+        minHeight: '640px',
         display: 'flex', 
         flexDirection: isMobile ? 'column' : 'row',
-        background: 'white', 
         borderRadius: isMobile ? '24px' : '32px', 
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
-        margin: isMobile ? '20px 0' : '0'
+        position: 'relative',
+        zIndex: 1
       }}>
+        {/* Left Side Branding */}
         {!isMobile && (
-          <div style={{ 
-            flex: 1, 
-            background: 'linear-gradient(135deg, #003870 0%, #0056A8 100%)', 
+          <div className="left-panel" style={{ 
+            flex: 1.1, 
             padding: '60px', 
             display: 'flex', 
             flexDirection: 'column',
-            justifyContent: 'center',
-            position: 'relative',
-            overflow: 'hidden'
+            justifyContent: 'center'
           }}>
-            {/* Subtle Background Pattern */}
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, pointerEvents: 'none' }}>
-              <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" /></svg>
-            </div>
-
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, pointerEvents: 'none', background: 'radial-gradient(circle, #fff 10%, transparent 10%)', backgroundSize: '20px 20px' }}></div>
+            
             <div style={{ position: 'relative', zIndex: 1 }}>
               <div style={{ marginBottom: '40px' }}>
-                 <BrandLogo size="md" light={true} />
-              </div>
-
+               <BrandLogo size="xxl" light={true} />
+            </div>
               <h1 style={{ color: 'white', fontSize: '48px', fontWeight: 900, lineHeight: 1.1, marginBottom: '24px', fontFamily: "'Poppins', sans-serif" }}>
                 Precision Care <br/>
-                <span style={{ background: 'linear-gradient(135deg, #00C897, #0078FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Intelligence Platform.</span>
+                <span style={{ background: 'linear-gradient(135deg, #4CAF50, #0078FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Intelligence Platform.</span>
               </h1>
-              
-              <p style={{ color: '#94a3b8', fontSize: '18px', lineHeight: 1.6, marginBottom: '48px', maxWidth: '400px' }}>
-                Empowering healthcare providers with modern EMR solutions and unified hospital orchestration.
+              <p style={{ color: '#e2e8f0', fontSize: '18px', lineHeight: 1.6, marginBottom: '48px', maxWidth: '400px' }}>
+                Empowering healthcare providers with modern EMR solutions and unified orchestration.
               </p>
-
               <div style={{ display: 'flex', gap: '20px' }}>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94b8d4', fontSize: '12px', fontWeight: 700 }}>
-                    <div style={{ width: '6px', height: '6px', background: '#00C897', borderRadius: '50%' }}></div>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f8fafc', fontSize: '12px', fontWeight: 700 }}>
+                    <div style={{ width: '6px', height: '6px', background: '#4CAF50', borderRadius: '50%', boxShadow: '0 0 10px #4CAF50' }}></div>
                     HIPAA COMPLIANT
                  </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94b8d4', fontSize: '12px', fontWeight: 700 }}>
-                    <div style={{ width: '6px', height: '6px', background: '#0078FF', borderRadius: '50%' }}></div>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f8fafc', fontSize: '12px', fontWeight: 700 }}>
+                    <div style={{ width: '6px', height: '6px', background: '#0078FF', borderRadius: '50%', boxShadow: '0 0 10px #0078FF' }}></div>
                     SOC 2 CERTIFIED
                  </div>
               </div>
@@ -165,31 +240,33 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* RIGHT: Login Form */}
+        {/* Right Side Login Form */}
         <div style={{ 
-          width: isMobile ? '100%' : '480px', 
-          padding: isMobile ? '40px 24px' : '60px', 
+          flex: 1,
+          padding: isMobile ? '40px 24px' : '60px 40px', 
           display: 'flex', 
           flexDirection: 'column', 
-          justifyContent: 'center' 
+          justifyContent: 'center',
+          background: 'white'
         }}>
           {isMobile && (
             <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
-              <BrandLogo size="md" />
+              <BrandLogo size="xl" />
             </div>
           )}
           <div style={{ marginBottom: '40px' }}>
             <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>Welcome Back</h2>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Sign in to access your healthcare workspace</p>
+            <p style={{ color: '#64748b', fontSize: '15px' }}>Sign in to access your secure workspace</p>
           </div>
 
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Workspace Type</label>
               <select 
                 value={type} 
                 onChange={(e: any) => setType(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
+                className="glass-input"
+                style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', fontWeight: 600, appearance: 'none' }}
               >
                 <option value="tenant">Hospital Facility</option>
                 <option value="nexus">Nexus Administration</option>
@@ -200,8 +277,8 @@ export default function LoginPage() {
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Select Hospital</label>
                 {domainFacility && domainName ? (
-                  <div style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #0d9488', background: '#f0fdfa', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ color: '#0d9488', fontSize: '14px' }}>&#10003;</span>
+                  <div style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: '2px solid #4CAF50', background: '#f0fdf4', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ background: '#4CAF50', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white' }}>✓</div>
                     {domainName}
                     <span style={{ marginLeft: 'auto', fontSize: '11px', color: '#64748b' }}>via domain</span>
                   </div>
@@ -210,7 +287,8 @@ export default function LoginPage() {
                     required
                     value={facility} 
                     onChange={(e) => setFacility(e.target.value)}
-                    style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
+                    className="glass-input"
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', fontWeight: 600, appearance: 'none' }}
                   >
                     <option value="">Choose your facility...</option>
                     {facilities.map(f => <option key={f.id} value={f.id}>{f.name}{f.domain ? ` (${f.domain})` : ''}</option>)}
@@ -227,14 +305,15 @@ export default function LoginPage() {
                 placeholder="name@hospital.com" 
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
+                className="glass-input"
+                style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', fontWeight: 600 }}
               />
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Password</label>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', color: '#0d9488', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', color: '#0056A3', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
                   {showPassword ? "HIDE" : "SHOW"}
                 </button>
               </div>
@@ -244,35 +323,34 @@ export default function LoginPage() {
                 placeholder="••••••••" 
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '2px solid #f1f5f9', background: 'var(--app-bg)', fontWeight: 600, outline: 'none' }}
+                className="glass-input"
+                style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', fontWeight: 600, letterSpacing: showPassword ? 'normal' : '2px' }}
               />
             </div>
 
-            {error && <div style={{ color: '#ef4444', fontSize: '13px', fontWeight: 600, textAlign: 'center', padding: '12px', background: '#fef2f2', borderRadius: '10px' }}>{error}</div>}
+            {error && <div style={{ color: '#ef4444', fontSize: '13px', fontWeight: 600, textAlign: 'center', padding: '12px', background: '#fef2f2', borderRadius: '10px', marginTop: '10px' }}>{error}</div>}
 
             <button 
               type="submit" 
               disabled={loading}
+              className="login-btn"
               style={{ 
                 width: '100%', 
                 padding: '16px', 
-                borderRadius: '14px', 
-                background: 'linear-gradient(135deg, #0056A8 0%, #003870 100%)', 
+                borderRadius: '12px', 
                 color: 'white', 
                 border: 'none', 
                 fontWeight: 800, 
-                fontSize: '16px', 
+                fontSize: '15px', 
                 cursor: 'pointer',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                boxShadow: '0 4px 14px rgba(0, 86, 168, 0.35)',
-                fontFamily: "'Poppins', sans-serif"
+                fontFamily: "'Poppins', sans-serif",
+                marginTop: '10px'
               }}
             >
-              {loading ? "AUTHENTICATING..." : "SIGN IN TO WORKSPACE"}
+              {loading ? "AUTHENTICATING..." : "SIGN IN"}
             </button>
-
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-               <p style={{ fontSize: '12px', color: '#94b8d4', fontWeight: 600 }}>POWERED BY <span style={{ color: '#00C897', fontWeight: 900 }}>CYBELINX</span></p>
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+               <p style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 600 }}>POWERED BY <span style={{ color: '#4CAF50', fontWeight: 900 }}>CYBELINX</span></p>
             </div>
           </form>
         </div>
