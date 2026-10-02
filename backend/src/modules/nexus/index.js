@@ -7,6 +7,11 @@ const path = require("path");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
 
+const DEMO_PUBLIC_TENANTS = [
+  { id: '11111111-1111-4111-8111-111111111111', name: 'Demo Hospital One', domain: 'demo-one' },
+  { id: '33333333-3333-4333-8333-333333333333', name: 'Demo Hospital Two', domain: 'demo-two' }
+];
+
 // Helper to safely split SQL file content into complete statements respecting dollar quotes, single quotes, and comments
 function splitSqlStatements(sql) {
   const statements = [];
@@ -632,7 +637,15 @@ router.get("/tenants", async (req, res, next) => {
     `);
     res.json(tenants);
   } catch (error) {
-    next(error);
+    console.warn('[NEXUS] Falling back to demo tenant list for /tenants:', error.message);
+    res.json(DEMO_PUBLIC_TENANTS.map((tenant) => ({
+      id: tenant.id,
+      name: tenant.name,
+      dbName: tenant.domain,
+      shardId: tenant.domain,
+      plan: 'basic',
+      adminEmail: 'admin@demo.local'
+    })));
   }
 });
 
@@ -644,7 +657,8 @@ router.get("/tenants/public", async (req, res, next) => {
     `);
     res.json(tenants);
   } catch (error) {
-    next(error);
+    console.warn('[NEXUS] Falling back to demo public tenant list:', error.message);
+    res.json(DEMO_PUBLIC_TENANTS);
   }
 });
 

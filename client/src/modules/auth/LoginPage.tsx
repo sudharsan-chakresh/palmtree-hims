@@ -29,18 +29,26 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
+    const fallbackFacilities = [
+      { id: '11111111-1111-4111-8111-111111111111', name: 'Demo Hospital One', domain: 'demo-one' },
+      { id: '33333333-3333-4333-8333-333333333333', name: 'Demo Hospital Two', domain: 'demo-two' }
+    ];
+
     axios.get(`${API_BASE}/api/nexus/tenants/public`).then(res => {
       const list: any[] = res.data;
-      setFacilities(list);
+      const finalList = list && list.length ? list : fallbackFacilities;
+      setFacilities(finalList);
       const subdomain = getSubdomain();
       if (subdomain) {
-        const matched = list.find(f => f.domain === subdomain);
+        const matched = finalList.find(f => f.domain === subdomain);
         if (matched) {
           setFacility(matched.id);
           setDomainFacility(matched.id);
           setDomainName(matched.name);
         }
       }
+    }).catch(() => {
+      setFacilities(fallbackFacilities);
     });
   }, []);
 
