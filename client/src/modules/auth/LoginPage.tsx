@@ -306,11 +306,13 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>Email Address</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px', textTransform: 'uppercase' }}>
+                {type === "nexus" ? "Username" : "Email Address"}
+              </label>
               <input 
                 required
-                type="email" 
-                placeholder="name@hospital.com" 
+                type={type === "nexus" ? "text" : "email"} 
+                placeholder={type === "nexus" ? "nexusadmin" : "name@hospital.com"} 
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className="glass-input"
