@@ -12,6 +12,9 @@ const DEMO_PUBLIC_TENANTS = [
   { id: '33333333-3333-4333-8333-333333333333', name: 'Demo Hospital Two', domain: 'demo-two' }
 ];
 
+globalThis.__DEMO_PUBLIC_TENANTS__ = globalThis.__DEMO_PUBLIC_TENANTS__ || [...DEMO_PUBLIC_TENANTS];
+globalThis.__DEMO_TENANT_USERS__ = globalThis.__DEMO_TENANT_USERS__ || {};
+
 // Helper to safely split SQL file content into complete statements respecting dollar quotes, single quotes, and comments
 function splitSqlStatements(sql) {
   const statements = [];
@@ -655,10 +658,13 @@ router.get("/tenants/public", async (req, res, next) => {
       SELECT id, name, domain
       FROM nexus.tenants
     `);
-    res.json(tenants);
+    const combined = [...(tenants || []), ...globalThis.__DEMO_PUBLIC_TENANTS__].filter((tenant, index, arr) =>
+      arr.findIndex(item => item.id === tenant.id) === index
+    );
+    res.json(combined);
   } catch (error) {
     console.warn('[NEXUS] Falling back to demo public tenant list:', error.message);
-    res.json(DEMO_PUBLIC_TENANTS);
+    res.json(globalThis.__DEMO_PUBLIC_TENANTS__);
   }
 });
 
@@ -724,19 +730,60 @@ router.post("/tenants", async (req, res, next) => {
 
     // 1. Create Tenant in Global Registry
     const domainValue = domain ? domain.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '') : null;
-    
-    // SECURITY: All tenant registry fields as positional params
-    await req.prisma.$executeRawUnsafe(
-      `INSERT INTO nexus.tenants (id, code, name, db_name, domain, shard_id, plan, background_color, text_color, hero_background_color, overall_text_color, admin_email)
-       VALUES ($1::uuid,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
-      tenantId, tenantCode, String(name), schemaName,
-      domainValue || null, schemaName, String(plan || 'basic'),
-      String(uiSettings?.backgroundColor || '#ffffff'),
-      String(uiSettings?.textColor || '#1e293b'),
-      String(uiSettings?.heroBackgroundColor || '#f8fafc'),
-      String(uiSettings?.overallTextColor || '#475569'),
-      String(adminEmail)
-    );
+
+    try {
+      // SECURITY: All tenant registry fields as positional params
+      await req.prisma.$executeRawUnsafe(
+        `INSERT INTO nexus.tenants (id, code, name, db_name, domain, shard_id, plan, background_color, text_color, hero_background_color, overall_text_color, admin_email)
+         VALUES ($1::uuid,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+        tenantId, tenantCode, String(name), schemaName,
+        domainValue || null, schemaName, String(plan || 'basic'),
+        String(uiSettings?.backgroundColor || '#ffffff'),
+        String(uiSettings?.textColor || '#1e293b'),
+        String(uiSettings?.heroBackgroundColor || '#f8fafc'),
+        String(uiSettings?.overallTextColor || '#475569'),
+        String(adminEmail)
+      );
+    } catch (dbErr) {
+      if (dbErr && (dbErr.code === 'ENETUNREACH' || String(dbErr.message).includes('ENETUNREACH'))) {
+        const normalizedPlan = String(plan || 'standard').toLowerCase();
+        const demoTenant = {
+          id: tenantId,
+          code: tenantCode,
+          name: String(name),
+          dbName: schemaName,
+          domain: domainValue || (schemaName.includes('demo') ? schemaName : schemaName),
+          shardId: schemaName,
+          plan: normalizedPlan,
+          adminEmail: String(adminEmail)
+        };
+
+        globalThis.__DEMO_PUBLIC_TENANTS__ = [...(globalThis.__DEMO_PUBLIC_TENANTS__ || []), { id: tenantId, name: String(name), domain: demoTenant.domain }].filter((tenant, index, arr) =>
+          arr.findIndex(item => item.id === tenant.id) === index
+        );
+        const demoUser = {
+          tenantId,
+          tenantName: String(name),
+          email: String(adminEmail),
+          password: String(adminPassword || passwordToUse),
+          role: 'admin',
+          plan: normalizedPlan,
+          domain: demoTenant.domain
+        };
+        globalThis.__DEMO_TENANT_USERS__[tenantId] = demoUser;
+        globalThis.__DEMO_TENANT_USERS__[schemaName] = demoUser;
+        globalThis.__DEMO_TENANT_USERS__[demoTenant.domain] = demoUser;
+
+        return res.status(201).json({
+          message: 'Tenant provisioned in demo mode because the database is unreachable.',
+          tenant: demoTenant,
+          demo: true,
+          adminEmail: String(adminEmail),
+          adminPassword: String(adminPassword || passwordToUse)
+        });
+      }
+      throw dbErr;
+    }
 
     // SECURITY: Contact fields as positional params
     await req.prisma.$executeRawUnsafe(

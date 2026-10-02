@@ -9,6 +9,7 @@ const router = express.Router();
 // Master credentials from environment
 const NEXUS_USER = process.env.NEXUS_ADMIN_USER;
 const NEXUS_PASS = process.env.NEXUS_ADMIN_PASSWORD;
+globalThis.__DEMO_TENANT_USERS__ = globalThis.__DEMO_TENANT_USERS__ || {};
 
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
@@ -88,8 +89,16 @@ router.post("/login", loginLimiter, async (req, res) => {
       }
     }
 
-    const demoTenant = type === "tenant" && resolvedFacility ? DEMO_TENANT_USERS[String(resolvedFacility)] : null;
-    if (type === "tenant" && demoTenant && String(email).trim().toLowerCase() === demoTenant.email.toLowerCase() && String(password).trim() === demoTenant.password) {
+    const demoTenant = type === "tenant" && resolvedFacility ? (
+      DEMO_TENANT_USERS[String(resolvedFacility)] ||
+      globalThis.__DEMO_TENANT_USERS__[String(resolvedFacility)] ||
+      Object.values(globalThis.__DEMO_TENANT_USERS__ || {}).find((entry) =>
+        String(entry.tenantId) === String(resolvedFacility) ||
+        String(entry.domain) === String(resolvedFacility) ||
+        String(entry.tenantName).toLowerCase().replace(/\s+/g, '_') === String(resolvedFacility).toLowerCase()
+      )
+    ) : null;
+    if (type === "tenant" && demoTenant && String(email).trim().toLowerCase() === String(demoTenant.email).trim().toLowerCase() && String(password).trim() === String(demoTenant.password)) {
       const token = jwt.sign({
         user: demoTenant.email,
         tenantId: demoTenant.tenantId,
