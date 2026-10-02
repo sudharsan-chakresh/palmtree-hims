@@ -12,6 +12,27 @@ const NEXUS_PASS = process.env.NEXUS_ADMIN_PASSWORD;
 
 const RESERVED_SUBDOMAINS = ['dev', 'staging', 'stage', 'test', 'www', 'api', 'app', 'mail', 'admin', 'support', 'help', 'docs', 'status', 'uat', 'qa'];
 
+const DEMO_TENANT_USERS = {
+  '11111111-1111-4111-8111-111111111111': {
+    tenantId: '11111111-1111-4111-8111-111111111111',
+    tenantName: 'Demo Hospital One',
+    email: 'admin@demo-one.local',
+    password: 'admin@1234',
+    role: 'admin',
+    plan: 'basic',
+    domain: 'demo-one'
+  },
+  '33333333-3333-4333-8333-333333333333': {
+    tenantId: '33333333-3333-4333-8333-333333333333',
+    tenantName: 'Demo Hospital Two',
+    email: 'admin@demo-two.local',
+    password: 'admin@1234',
+    role: 'admin',
+    plan: 'basic',
+    domain: 'demo-two'
+  }
+};
+
 function extractSubdomain(host) {
   if (!host) return null;
   const hostname = host.split(':')[0].toLowerCase();
@@ -65,6 +86,31 @@ router.post("/login", loginLimiter, async (req, res) => {
           console.log(`[AUTH] Resolved facility from domain: ${subdomain} -> ${resolvedFacility}`);
         }
       }
+    }
+
+    const demoTenant = type === "tenant" && resolvedFacility ? DEMO_TENANT_USERS[String(resolvedFacility)] : null;
+    if (type === "tenant" && demoTenant && String(email).trim().toLowerCase() === demoTenant.email.toLowerCase() && String(password).trim() === demoTenant.password) {
+      const token = jwt.sign({
+        user: demoTenant.email,
+        tenantId: demoTenant.tenantId,
+        type: "tenant",
+        role: demoTenant.role,
+        tenantName: demoTenant.tenantName
+      }, process.env.JWT_SECRET, { expiresIn: "8h" });
+
+      return res.json({
+        token,
+        tenantId: demoTenant.tenantId,
+        type: "tenant",
+        landingPage: "/tenant/dashboard",
+        role: demoTenant.role,
+        userName: 'Demo Administrator',
+        tenantName: demoTenant.tenantName,
+        tenantPlan: demoTenant.plan,
+        uiSettings: {},
+        menus: [],
+        permissions: []
+      });
     }
 
     // 3. Standard Tenant Login (with Force-Sync)
