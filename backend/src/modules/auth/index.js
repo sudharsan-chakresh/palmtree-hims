@@ -19,7 +19,7 @@ const DEMO_TENANT_USERS = {
     email: 'admin@demo-one.local',
     password: 'admin@1234',
     role: 'admin',
-    plan: 'basic',
+    plan: 'standard',
     domain: 'demo-one'
   },
   '33333333-3333-4333-8333-333333333333': {
@@ -28,7 +28,7 @@ const DEMO_TENANT_USERS = {
     email: 'admin@demo-two.local',
     password: 'admin@1234',
     role: 'admin',
-    plan: 'basic',
+    plan: 'standard',
     domain: 'demo-two'
   }
 };

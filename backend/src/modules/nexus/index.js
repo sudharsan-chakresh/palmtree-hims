@@ -643,7 +643,7 @@ router.get("/tenants", async (req, res, next) => {
       name: tenant.name,
       dbName: tenant.domain,
       shardId: tenant.domain,
-      plan: 'basic',
+      plan: 'standard',
       adminEmail: 'admin@demo.local'
     })));
   }
