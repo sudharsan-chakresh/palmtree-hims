@@ -772,9 +772,18 @@ app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 app.get("/health-db", async (req, res) => {
   try {
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+      return res.status(503).json({
+        status: 'degraded',
+        message: 'Database URL is not configured. Set DATABASE_URL to enable DB checks.',
+        url: 'URL is MISSING'
+      });
+    }
+
     const { Pool } = require('pg');
     const { dbQueryDuration, dbErrors } = require('./config/metrics').metrics || require('./config/metrics');
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_URL.includes("sslmode=require") ? { rejectUnauthorized: false } : false });
+    const pool = new Pool({ connectionString: databaseUrl, ssl: databaseUrl.includes("sslmode=require") ? { rejectUnauthorized: false } : false });
     const end = dbQueryDuration ? dbQueryDuration.startTimer({ query_type: 'health_check' }) : () => {};
     try {
       const result = await pool.query('SELECT current_schema(), now()');
@@ -784,7 +793,7 @@ app.get("/health-db", async (req, res) => {
         status: "ok", 
         db: "Raw Connection Success", 
         details: result.rows[0],
-        url: process.env.DATABASE_URL ? "URL is present" : "URL is MISSING"
+        url: "URL is present"
       });
     } catch (err) {
       if (end) end();
